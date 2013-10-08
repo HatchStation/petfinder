@@ -1,11 +1,17 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+
+require 'rubygems'
 require 'petfinder'
 require 'rspec'
-require 'webmock/rspec'
+require 'fakeweb'
 
 def fixture_file(filename)
   File.read(File.dirname(__FILE__) + "/fixtures/#{filename}")
 end
 
-def stub_get(url, filename)
-  stub_request(:get, url).to_return(body: fixture_file(filename), status: 200)
+def stub_get(url, filename, options={})
+  opts = {:body => fixture_file(filename)}.merge(options)
+
+  FakeWeb.register_uri(:get, url, opts)
 end
